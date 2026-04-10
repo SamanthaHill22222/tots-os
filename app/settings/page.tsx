@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
-// 🛠 1. CONFIGURATION & TYPES
 interface SocialHandles {
   instagram: string;
   linkedin: string;
@@ -21,26 +20,12 @@ export default function SettingsPage() {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [teamId, setTeamId] = useState<string | null>(null);
-  const [team, setTeam] = useState<any[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
-
-  // 🎨 BRANDING & CLARITY AI
-  const [logo, setLogo] = useState("");
-  const [primaryColor, setPrimaryColor] = useState("#a9b897");
   const [toneOfVoice, setToneOfVoice] = useState("Professional, yet empathetic.");
-  
-  // 🌐 SETTINGS
-  const [language, setLanguage] = useState("English (UK)");
-  const [timezone, setTimezone] = useState("GMT (London)");
   const [handles, setHandles] = useState<SocialHandles>({
     instagram: "", linkedin: "", twitter: "", tiktok: "", facebook: "", youtube: ""
   });
-
-  // 📧 IDENTITY
-  const [contactEmail, setContactEmail] = useState("");
   const [website, setWebsite] = useState("");
-
-  const [inviteEmail, setInviteEmail] = useState("");
 
   useEffect(() => {
     init();
@@ -66,14 +51,10 @@ export default function SettingsPage() {
         setTeamId(membership.team_id);
         const { data: settings } = await supabase.from("settings").select("*").eq("team_id", membership.team_id).maybeSingle();
         if (settings) {
-          setLogo(settings.logo || "");
-          setPrimaryColor(settings.primary_color || "#a9b897");
           setHandles(settings.handles || handles);
           setToneOfVoice(settings.tone_of_voice || "");
           setWebsite(settings.website || "");
         }
-        const { data: members } = await supabase.from("team_members").select("*").eq("team_id", membership.team_id);
-        setTeam(members || []);
       }
     } catch (err) {
       console.error(err);
@@ -85,8 +66,9 @@ export default function SettingsPage() {
   const saveSettings = async () => {
     const { error } = await supabase.from("settings").upsert({
       team_id: teamId,
-      logo, primary_color: primaryColor, handles, 
-      tone_of_voice: toneOfVoice, website
+      handles, 
+      tone_of_voice: toneOfVoice, 
+      website
     });
     if (error) alert(error.message);
     else alert("System Synced Successfully");
@@ -94,111 +76,52 @@ export default function SettingsPage() {
 
   if (loading) return <div className="min-h-screen flex items-center justify-center font-serif italic text-stone-400">Loading OS...</div>;
 
-  const isDeveloper = user?.email === "hill.samantha@hotmail.co.uk";
-  const isAuthorized = isDeveloper || (profile && AUTHORIZED_ROLES.includes(profile.role));
-
+  const isAuthorized = user?.email === "hill.samantha@hotmail.co.uk" || (profile && AUTHORIZED_ROLES.includes(profile.role));
   if (!isAuthorized) return <div className="min-h-screen flex items-center justify-center p-12 text-center font-serif">Access Level Denied.</div>;
 
   return (
     <div className={`min-h-screen transition-colors duration-500 ${isDarkMode ? 'bg-stone-950 text-stone-200' : 'bg-stone-50 text-stone-800'}`}>
       <div className="max-w-7xl mx-auto p-6 space-y-10 pb-40">
         
-        {/* HEADER & GLOBAL TOGGLES */}
         <div className={`flex flex-col md:flex-row justify-between items-center p-10 rounded-[3rem] border shadow-sm gap-6 ${isDarkMode ? 'bg-stone-900 border-stone-800' : 'bg-white border-stone-100'}`}>
           <div>
-            <h1 className="text-5xl font-serif italic">Global Settings</h1>
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] mt-2 opacity-50">Operational Role: {profile?.role}</p>
+            <h1 className="text-5xl font-serif italic text-[#a9b897]">Global Settings</h1>
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] mt-2 opacity-50">Role: {profile?.role}</p>
           </div>
           <div className="flex gap-4">
-            <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-4 rounded-2xl bg-stone-100 dark:bg-stone-800 hover:scale-105 transition-transform text-[10px] font-bold">
-              {isDarkMode ? 'LIGHT MODE' : 'DARK MODE'}
+            <button onClick={() => setIsDarkMode(!isDarkMode)} className="px-6 py-4 rounded-2xl bg-stone-100 dark:bg-stone-800 text-[9px] font-black uppercase tracking-widest">
+              {isDarkMode ? 'Light' : 'Dark'}
             </button>
-            <button onClick={saveSettings} className="px-8 py-4 bg-[#a9b897] text-stone-900 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg active:scale-95 transition-all">
+            <button onClick={saveSettings} className="px-8 py-4 bg-[#a9b897] text-stone-900 rounded-2xl font-black text-[10px] uppercase tracking-widest">
               Commit Changes
             </button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          
           <div className="lg:col-span-8 space-y-10">
-            
-            {/* TONE OF VOICE */}
-            <section className={`p-10 rounded-[2.5rem] border space-y-6 ${isDarkMode ? 'bg-stone-900 border-stone-800' : 'bg-white border-stone-100'}`}>
-              <div className="flex items-center gap-3">
-                <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-stone-400">Clarity AI: Tone of Voice</h2>
-              </div>
+            <section className={`p-10 rounded-[2.5rem] border ${isDarkMode ? 'bg-stone-900 border-stone-800' : 'bg-white border-stone-100'}`}>
+              <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-stone-400 mb-6">Clarity AI: Tone</h2>
               <textarea 
                 value={toneOfVoice}
                 onChange={(e) => setToneOfVoice(e.target.value)}
-                placeholder="Describe your brand voice..."
                 className="w-full h-32 p-6 bg-stone-50 dark:bg-stone-800/50 border-none rounded-3xl text-sm outline-none resize-none"
               />
             </section>
 
-            {/* IDENTITY & SOCIAL */}
-            <section className={`p-10 rounded-[2.5rem] border space-y-8 ${isDarkMode ? 'bg-stone-900 border-stone-800' : 'bg-white border-stone-100'}`}>
-              <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-stone-400">Network Presence</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input placeholder="Public Email" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} className="p-5 bg-stone-50 dark:bg-stone-800 rounded-2xl border-none outline-none text-sm" />
-                <input placeholder="Website URL" value={website} onChange={(e) => setWebsite(e.target.value)} className="p-5 bg-stone-50 dark:bg-stone-800 rounded-2xl border-none outline-none text-sm" />
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <section className={`p-10 rounded-[2.5rem] border ${isDarkMode ? 'bg-stone-900 border-stone-800' : 'bg-white border-stone-100'}`}>
+              <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-stone-400 mb-8">Social Handles</h2>
+              <div className="grid grid-cols-2 gap-4">
                 {Object.keys(handles).map((key) => (
-                  <div key={key} className="p-4 bg-stone-50 dark:bg-stone-800 rounded-2xl flex items-center gap-3">
-                    <span className="text-[9px] font-bold text-stone-400 uppercase">{key.substring(0,2)}</span>
+                  <div key={key} className="p-4 bg-stone-50 dark:bg-stone-800 rounded-2xl flex flex-col gap-1">
+                    <label className="text-[8px] font-black uppercase opacity-40">{key}</label>
                     <input 
                       value={handles[key]} 
                       onChange={(e) => setHandles({...handles, [key]: e.target.value})}
-                      className="bg-transparent w-full text-[10px] font-bold outline-none"
-                      placeholder={key}
+                      className="bg-transparent w-full text-[11px] font-bold outline-none"
                     />
                   </div>
                 ))}
-              </div>
-            </section>
-
-            {/* SECURITY & DATA */}
-            <section className={`p-10 rounded-[2.5rem] border space-y-8 ${isDarkMode ? 'bg-stone-900 border-stone-800' : 'bg-white border-stone-100'}`}>
-              <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-stone-400">Privacy & Security</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <button className="flex items-center justify-between p-6 bg-stone-50 dark:bg-stone-800 rounded-3xl hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors text-left">
-                  <div>
-                    <p className="text-xs font-black uppercase">Change Password</p>
-                    <p className="text-[10px] opacity-50">Update your access key</p>
-                  </div>
-                </button>
-                <button className="flex items-center justify-between p-6 bg-stone-50 dark:bg-stone-800 rounded-3xl hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors text-left">
-                  <div>
-                    <p className="text-xs font-black uppercase">Download Vault</p>
-                    <p className="text-[10px] opacity-50">Export system data (.json)</p>
-                  </div>
-                </button>
-              </div>
-            </section>
-          </div>
-
-          <div className="lg:col-span-4 space-y-10">
-            <section className="bg-stone-900 p-10 rounded-[3rem] text-white space-y-6 shadow-2xl">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#a9b897]">Current Plan</p>
-              <h3 className="text-4xl font-serif italic">Enterprise</h3>
-              <p className="text-xs text-stone-400">Next billing: Jan 12, 2026</p>
-              <div className="pt-4 space-y-3">
-                <button className="w-full py-4 bg-white/10 hover:bg-white/20 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">Manage Billing</button>
-              </div>
-            </section>
-
-            <section className={`p-10 rounded-[3rem] border space-y-6 ${isDarkMode ? 'bg-stone-900 border-stone-800' : 'bg-white border-stone-100'}`}>
-              <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-stone-400">Localization</h2>
-              <div className="space-y-4">
-                <select value={language} onChange={(e) => setLanguage(e.target.value)} className="w-full p-4 bg-stone-50 dark:bg-stone-800 rounded-xl text-xs font-bold outline-none">
-                  <option>English (UK)</option>
-                  <option>English (US)</option>
-                </select>
-                <select value={timezone} onChange={(e) => setTimezone(e.target.value)} className="w-full p-4 bg-stone-50 dark:bg-stone-800 rounded-xl text-xs font-bold outline-none">
-                  <option>GMT (London)</option>
-                  <option>EST (New York)</option>
-                </select>
               </div>
             </section>
           </div>

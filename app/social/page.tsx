@@ -3,13 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Upload, Sparkles, Image as ImageIcon, 
-  FileText, Film, Layers, MapPin, Hash, AtSign, Wand2, Gauge, Trash2,
-  TrendingUp, Clock, Copy, Download, Zap, Share2, Linkedin, Instagram, Twitter, X
-} from "lucide-react";
 
-// ✅ FIXED: Using a local Page wrapper to avoid import errors if your Component/Page.tsx is broken
+// ✅ Using a local Page wrapper to avoid import errors
 function PageWrapper({ children }: { children: React.ReactNode }) {
   return <div className="min-h-screen bg-[#faf9f6]">{children}</div>;
 }
@@ -35,16 +30,14 @@ export default function SocialLab() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [drafts, setDrafts] = useState<ContentPost[]>([]);
   const [weeklyCount, setWeeklyCount] = useState(0);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const WEEKLY_LIMIT = 15;
-  const platforms = ["instagram", "linkedin", "twitter", "tiktok", "youtube"];
   
   const contentTypes = [
-    { id: "image", icon: ImageIcon, label: "Single Image" },
-    { id: "carousel", icon: Layers, label: "Carousel" },
-    { id: "video", icon: Film, label: "Video/Reel" },
-    { id: "blog", icon: FileText, label: "Blog Post" },
+    { id: "image", label: "Single Image", code: "IMG" },
+    { id: "carousel", label: "Carousel", code: "CRSL" },
+    { id: "video", label: "Video/Reel", code: "MOV" },
+    { id: "blog", label: "Blog Post", code: "TXT" },
   ] as const;
 
   useEffect(() => {
@@ -147,7 +140,7 @@ export default function SocialLab() {
           <header className="flex justify-between items-start">
             <div className="space-y-4">
               <p className="text-[10px] font-black uppercase tracking-[0.3em] text-purple-500 flex items-center gap-2">
-                <Sparkles size={12} /> Elite Tier Node
+                <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" /> Elite Tier Node
               </p>
               <h1 className="text-7xl font-serif italic text-stone-800 tracking-tighter leading-tight">Social Lab</h1>
               <p className="text-stone-400 font-medium max-w-md italic font-serif">Distribution engine online. Manage the grid.</p>
@@ -160,7 +153,7 @@ export default function SocialLab() {
               {/* CAPACITY */}
               <div className="flex flex-col md:flex-row items-center justify-between bg-white border border-stone-100 p-8 rounded-[2.5rem] shadow-sm gap-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-stone-900 rounded-2xl text-white"><Gauge size={20} /></div>
+                  <div className="px-3 py-1 bg-stone-900 rounded-lg text-[10px] font-mono text-white tracking-widest">CAP</div>
                   <div>
                     <h3 className="text-[9px] font-black uppercase tracking-[0.2em] text-stone-400">System Capacity</h3>
                     <p className="text-lg font-serif italic text-stone-800">{weeklyCount} / {WEEKLY_LIMIT} Weekly Posts</p>
@@ -182,8 +175,8 @@ export default function SocialLab() {
                     <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-400">Format</h2>
                     <div className="flex flex-wrap gap-2">
                       {contentTypes.map((t) => (
-                        <button key={t.id} onClick={() => setContentType(t.id as any)} className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border text-[10px] font-bold uppercase transition-all ${contentType === t.id ? 'bg-stone-900 text-white border-stone-900' : 'border-stone-100 text-stone-400'}`}>
-                          <t.icon size={14} /> {t.label}
+                        <button key={t.id} onClick={() => setContentType(t.id as any)} className={`flex items-center gap-3 px-5 py-2.5 rounded-xl border text-[10px] font-bold uppercase transition-all ${contentType === t.id ? 'bg-stone-900 text-white border-stone-900' : 'border-stone-100 text-stone-400'}`}>
+                          <span className="opacity-50 font-mono text-[8px]">{t.code}</span> {t.label}
                         </button>
                       ))}
                     </div>
@@ -197,19 +190,19 @@ export default function SocialLab() {
                     placeholder="Describe the post intent..."
                     className="w-full h-44 bg-stone-50 rounded-[2rem] p-8 text-2xl font-serif outline-none italic text-stone-800 placeholder-stone-200 resize-none shadow-inner"
                   />
-                  <div className="absolute top-6 right-6 text-stone-100"><Wand2 size={28} /></div>
+                  <div className="absolute top-8 right-8 text-stone-200 font-mono text-[10px] tracking-widest">[INPUT_READY]</div>
                 </div>
 
                 <div className="mt-10 flex items-center justify-between">
                   <button className="text-stone-400 hover:text-stone-800 text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                    <Upload size={16} /> Asset Reference
+                    Attach Asset Reference
                   </button>
                   <button
                     onClick={buildContent}
                     disabled={isGenerating || !prompt}
                     className="bg-purple-600 text-white px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg hover:bg-purple-700 disabled:opacity-30 transition-all"
                   >
-                    {isGenerating ? "Synthesizing..." : "Excel Post"}
+                    {isGenerating ? "Synthesizing..." : "Generate Excellence"}
                   </button>
                 </div>
               </div>
@@ -222,15 +215,15 @@ export default function SocialLab() {
                       key={idx} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                       className="bg-[#fff9c4] p-8 shadow-xl relative flex flex-col min-h-[500px] rounded-sm"
                     >
-                      <button onClick={() => setDrafts(drafts.filter((_, i) => i !== idx))} className="absolute top-4 right-4 text-stone-400 hover:text-red-500">
-                        <Trash2 size={16} />
+                      <button onClick={() => setDrafts(drafts.filter((_, i) => i !== idx))} className="absolute top-4 right-4 text-stone-400 hover:text-red-500 font-black text-[9px]">
+                        [ REMOVE ]
                       </button>
                       
                       <div className="w-full aspect-square bg-white rounded-sm mb-6 overflow-hidden relative">
                         <img src={post.media_url} alt="Ref" className="w-full h-full object-cover grayscale mix-blend-multiply opacity-80" />
                         <div className="absolute bottom-3 left-3 flex gap-2">
                            <div className="bg-white/90 px-2 py-1 rounded-full text-[9px] font-black flex items-center gap-1">
-                              <TrendingUp size={10} className="text-green-600" /> {post.excellence_score}%
+                              RANK: {post.excellence_score}%
                            </div>
                         </div>
                       </div>
@@ -258,15 +251,15 @@ export default function SocialLab() {
                 <h2 className="text-2xl font-serif italic text-purple-300">Resonance Engine</h2>
                 <div className="space-y-6">
                   {[
-                    { label: "Engagement Rate", val: "+24.8%" },
-                    { label: "Predictive Score", val: "92/100" },
+                    { label: "Engagement Rate", val: "+24.8%", trend: "UP" },
+                    { label: "Predictive Score", val: "92/100", trend: "STABLE" },
                   ].map((m, i) => (
                     <div key={i} className="flex justify-between items-end border-b border-stone-800 pb-4">
                       <div>
                         <p className="text-[9px] font-black uppercase tracking-widest text-stone-500">{m.label}</p>
                         <p className="text-3xl font-serif italic">{m.val}</p>
                       </div>
-                      <TrendingUp size={18} className="text-purple-400 mb-2" />
+                      <span className="text-purple-400 text-[8px] font-mono mb-2">[{m.trend}]</span>
                     </div>
                   ))}
                 </div>

@@ -6,13 +6,12 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import {
   LayoutDashboard, Users, CheckSquare, CreditCard, BarChart,
-  StickyNote, Settings, Menu, BookOpen, LogOut, Clock,
-  Briefcase, Sparkles, Calendar, Mail, Wifi, WifiOff,
+  StickyNote, Settings, Menu, LogOut, Clock,
+  Briefcase, Sparkles, Calendar, Mail, 
   Lock, ChevronRight, X, Zap
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// ✅ FIXED: Defined at top level so it's accessible everywhere in the file
 const TOTS_STORE_URL = "https://xiaiqp-g3.myshopify.com/";
 
 type Tier = "standard" | "premium" | "elite";
@@ -38,24 +37,15 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
-  const [isOnline, setIsOnline] = useState(true);
   const [currentTier, setCurrentTier] = useState<Tier>("standard");
   const [showUpgradeModal, setShowUpgradeModal] = useState<{show: boolean, targetTier: Tier | null}>({
     show: false,
     targetTier: null
   });
 
-  useEffect(() => {
-    setIsOnline(navigator.onLine);
-    const goOnline = () => setIsOnline(true);
-    const goOffline = () => setIsOnline(false);
-    window.addEventListener("online", goOnline);
-    window.addEventListener("offline", goOffline);
-    return () => {
-      window.removeEventListener("online", goOnline);
-      window.removeEventListener("offline", goOffline);
-    };
-  }, []);
+  // 1. SAFETY CHECK: If we are on the login page, don't show the sidebar at all
+  // This prevents the Sidebar logic from interfering with the AuthGuard/Login flow
+  if (pathname === "/login") return null;
 
   const hasAccess = (linkTier: string) => {
     if (currentTier === "elite") return true;
@@ -73,26 +63,31 @@ export default function Sidebar() {
 
   async function handleLogout() {
     try {
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
+        await supabase.auth.signOut();
         router.push("/login");
         router.refresh();
     } catch (err) {
-        console.error("Logout lock error ignored:", err);
-        router.push("/login"); // Force redirect even if lock fails
+        console.error("Logout error:", err);
+        router.push("/login"); 
     }
   }
 
   return (
     <>
-      <div className={`h-screen bg-[var(--bg)] border-r border-[var(--border)] px-4 py-4 flex flex-col transition-all sticky top-0 ${collapsed ? "w-20" : "w-64"}`}>
+      <div className={`h-screen bg-[var(--bg)] border-r border-[var(--border)] px-4 py-4 flex flex-col transition-all sticky top-0 z-40 ${collapsed ? "w-20" : "w-64"}`}>
         <div className="flex flex-col gap-2 mb-8">
           <div className="flex items-center justify-between">
             {!collapsed && <h1 className="text-lg font-semibold italic uppercase tracking-widest text-stone-800">TOTs OS</h1>}
-            <button onClick={() => setCollapsed(!collapsed)} className="p-1.5 hover:bg-stone-100 rounded-md transition-colors"><Menu size={20} /></button>
+            <button onClick={() => setCollapsed(!collapsed)} className="p-1.5 hover:bg-stone-100 rounded-md transition-colors">
+              <Menu size={20} />
+            </button>
           </div>
           {!collapsed && (
-            <select value={currentTier} onChange={(e) => setCurrentTier(e.target.value as Tier)} className="text-[9px] font-black uppercase tracking-widest bg-stone-100 border-none rounded-full px-3 py-1 outline-none cursor-pointer">
+            <select 
+              value={currentTier} 
+              onChange={(e) => setCurrentTier(e.target.value as Tier)} 
+              className="text-[9px] font-black uppercase tracking-widest bg-stone-100 border-none rounded-full px-3 py-1 outline-none cursor-pointer"
+            >
               <option value="standard">Standard Node</option>
               <option value="premium">Premium Node</option>
               <option value="elite">Elite Node</option>
@@ -111,10 +106,14 @@ export default function Sidebar() {
                 <Link
                   href={locked ? "#" : link.href}
                   onClick={(e) => handleLinkClick(e, link.tier as Tier)}
-                  className={`flex items-center justify-between px-3 py-2.5 rounded-lg transition-all ${active ? "bg-white text-black font-medium border border-gray-200 shadow-sm" : "text-[var(--muted)]"} ${locked ? "hover:bg-stone-50" : "hover:bg-white/5 hover:text-white"}`}
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-lg transition-all ${
+                    active 
+                      ? "bg-white text-black font-medium border border-gray-200 shadow-sm" 
+                      : "text-stone-500 hover:bg-stone-100"
+                  } ${locked ? "opacity-80" : ""}`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon size={18} className={active ? "text-black" : "group-hover:text-white"} />
+                    <Icon size={18} className={active ? "text-black" : "text-stone-400 group-hover:text-stone-600"} />
                     {!collapsed && <span className="text-sm">{link.label}</span>}
                   </div>
                   {!collapsed && locked && <Lock size={12} className="text-stone-300" />}
@@ -132,17 +131,27 @@ export default function Sidebar() {
         </div>
       </div>
 
+      {/* Upgrade Modal */}
       <AnimatePresence>
         {showUpgradeModal.show && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm">
             <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0 }} 
+              animate={{ scale: 1, opacity: 1 }} 
+              exit={{ scale: 0.9, opacity: 0 }}
               className="bg-white w-full max-w-md rounded-[3rem] p-10 shadow-2xl relative overflow-hidden"
             >
-              <button onClick={() => setShowUpgradeModal({show: false, targetTier: null})} className="absolute top-6 right-6 text-stone-300 hover:text-stone-800 transition-colors"><X size={24} /></button>
+              <button 
+                onClick={() => setShowUpgradeModal({show: false, targetTier: null})} 
+                className="absolute top-6 right-6 text-stone-300 hover:text-stone-800 transition-colors"
+              >
+                <X size={24} />
+              </button>
               
               <div className="space-y-6">
-                <div className="inline-flex p-4 bg-purple-50 rounded-2xl text-purple-500"><Zap size={32} fill="currentColor" /></div>
+                <div className="inline-flex p-4 bg-purple-50 rounded-2xl text-purple-500">
+                  <Zap size={32} fill="currentColor" />
+                </div>
                 <div>
                   <h2 className="text-4xl font-serif italic text-stone-800 leading-tight">Unlock {showUpgradeModal.targetTier} Tier</h2>
                   <p className="text-stone-400 mt-2 font-medium italic">Upgrade to access this node.</p>

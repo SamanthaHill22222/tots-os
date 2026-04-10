@@ -1,94 +1,72 @@
 "use client";
 
 import { useState } from "react";
-import { createBrowserClient } from "@supabase/ssr"; // Changed this
-import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
-export default function LoginPage() {
+export default function LoginPage() { // Renamed for clarity
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
-  const router = useRouter();
 
-  // Create the client directly using your env vars
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const signIn = async () => {
+    if (!email) {
+      alert("Please enter your email");
+      return;
+    }
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
     setLoading(true);
-    setError(null);
-
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithOtp({
       email,
-      password,
+      options: {
+        // Updated to port 3000 to match your terminal logs
+        emailRedirectTo: "http://localhost:3000/dashboard",
+      },
     });
 
+    setLoading(false);
+
     if (error) {
-      setError(error.message);
-      setLoading(false);
+      console.error(error);
+      alert("Error sending magic link: " + error.message);
     } else {
-      // Successful login! 
-      // We refresh to ensure the middleware picks up the new cookie
-      router.refresh();
-      router.push("/dashboard");
+      alert("Check your email for the login link!");
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#F9F9F9] px-4">
-      <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-sm border border-gray-100">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-            TOTS-OS
-          </h2>
-          <p className="mt-2 text-sm text-gray-500">
-            Welcome back. Please sign in.
-          </p>
-        </div>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white">
+      <div style={{ padding: 40, border: '1px solid #eee', borderRadius: 20, textAlign: 'center' }}>
+        <h1 style={{ marginBottom: 20, fontWeight: 'bold', letterSpacing: '2px' }}>TOTS OS</h1>
+        <p style={{ color: '#666', marginBottom: 20 }}>Enter your email for a magic link</p>
 
-        <form className="mt-8 space-y-4" onSubmit={handleLogin}>
-          {error && (
-            <div className="rounded-md bg-red-50 p-3 text-xs text-red-500 border border-red-100">
-              {error}
-            </div>
-          )}
-          
-          <div className="space-y-3">
-            <input
-              type="email"
-              required
-              className="block w-full rounded-lg border border-gray-200 px-4 py-3 text-gray-900 text-sm focus:border-black focus:ring-0 focus:outline-none transition-all"
-              placeholder="Email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              type="password"
-              required
-              className="block w-full rounded-lg border border-gray-200 px-4 py-3 text-gray-900 text-sm focus:border-black focus:ring-0 focus:outline-none transition-all"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
+        <input
+          type="email"
+          placeholder="email@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={{ 
+            padding: '12px', 
+            marginRight: 10, 
+            border: '1px solid #ccc', 
+            borderRadius: '8px',
+            width: '250px' 
+          }}
+        />
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-black py-3 px-4 text-sm font-medium text-white hover:bg-zinc-800 transition-colors disabled:opacity-50"
-          >
-            {loading ? "Verifying..." : "Sign in"}
-          </button>
-        </form>
-        
-        <div className="text-center text-xs text-gray-400 mt-6">
-          Don't have an account? <a href="/join" className="text-black hover:underline">Request access</a>
-        </div>
+        <button
+          onClick={signIn}
+          disabled={loading}
+          style={{
+            padding: '12px 24px',
+            background: loading ? "#666" : "black",
+            color: "white",
+            cursor: loading ? "not-allowed" : "pointer",
+            borderRadius: '8px',
+            border: 'none',
+            fontWeight: 'bold'
+          }}
+        >
+          {loading ? "Sending..." : "Login"}
+        </button>
       </div>
     </div>
   );

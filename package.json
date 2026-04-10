@@ -13,6 +13,7 @@
     "@react-pdf/renderer": "^4.4.0",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.102.0",
+    "@vercel/analytics": "^2.0.1",
     "autoprefixer": "^10.4.27",
     "axios": "^1.14.0",
     "bullmq": "^5.73.0",

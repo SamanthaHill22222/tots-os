@@ -24,7 +24,6 @@ export default function SettingsPage() {
   const [contactEmail, setContactEmail] = useState("");
   const [primaryColor, setPrimaryColor] = useState("#a9b897");
   const [toneOfVoice, setToneOfVoice] = useState("Professional, yet empathetic.");
-  const [handles, setHandles] = useState<any>({ instagram: "", linkedin: "", twitter: "" });
 
   useEffect(() => { init(); }, []);
 
@@ -122,18 +121,6 @@ export default function SettingsPage() {
             <div className="pt-8 border-t border-stone-100 dark:border-stone-800 space-y-4">
               <label className="text-[10px] font-black uppercase text-stone-400">Social Connections</label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 bg-stone-50 dark:bg-stone-800 rounded-2xl flex items-center gap-4">
-                  <span className="text-[10px] font-bold text-[#a9b897]">IG</span>
-                  <input placeholder="Instagram" value={handles.instagram} onChange={(e) => setHandles({...handles, instagram: e.target.value})} className="bg-transparent text-xs outline-none w-full" />
-                </div>
-                <div className="p-4 bg-stone-50 dark:bg-stone-800 rounded-2xl flex items-center gap-4">
-                  <span className="text-[10px] font-bold text-[#a9b897]">LI</span>
-                  <input placeholder="LinkedIn" value={handles.linkedin} onChange={(e) => setHandles({...handles, linkedin: e.target.value})} className="bg-transparent text-xs outline-none w-full" />
-                </div>
-                <div className="p-4 bg-stone-50 dark:bg-stone-800 rounded-2xl flex items-center gap-4">
-                  <span className="text-[10px] font-bold text-[#a9b897]">TW</span>
-                  <input placeholder="Twitter" value={handles.twitter} onChange={(e) => setHandles({...handles, twitter: e.target.value})} className="bg-transparent text-xs outline-none w-full" />
-                </div>
               </div>
             </div>
           </section>

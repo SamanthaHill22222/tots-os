@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
-/**
- * Next.js 16+ Dynamic Route Configuration
- * The 'params' object must be awaited as it is a Promise.
- */
-
 type RouteContext = {
   params: Promise<{ id: string }>;
 };
@@ -14,12 +9,8 @@ export async function GET(
   request: Request,
   context: RouteContext
 ) {
-  // Extract and await the params from the context
+  // You MUST await context.params in Next.js 15/16
   const { id } = await context.params;
-
-  if (!id) {
-    return NextResponse.json({ error: "Missing ID" }, { status: 400 });
-  }
 
   try {
     const { data, error } = await supabase
@@ -34,10 +25,6 @@ export async function GET(
 
     return NextResponse.json(data);
   } catch (err) {
-    console.error("Payment API Error:", err);
-    return NextResponse.json(
-      { error: "Internal Server Error" }, 
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

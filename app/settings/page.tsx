@@ -2,11 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { 
-  Instagram, Linkedin, Globe, Cpu, Zap, ShieldAlert, UserPlus, 
-  Mail, Lock, Download, Scale, Languages, Moon, Sun, CreditCard, 
-  Trash2, MessageSquareQuote, Eye, Palette
-} from "lucide-react";
 
 // 🛠 1. CONFIGURATION & TYPES
 interface SocialHandles {
@@ -115,8 +110,8 @@ export default function SettingsPage() {
             <p className="text-[10px] font-black uppercase tracking-[0.3em] mt-2 opacity-50">Operational Role: {profile?.role}</p>
           </div>
           <div className="flex gap-4">
-            <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-4 rounded-2xl bg-stone-100 dark:bg-stone-800 hover:scale-105 transition-transform">
-              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+            <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-4 rounded-2xl bg-stone-100 dark:bg-stone-800 hover:scale-105 transition-transform text-[10px] font-bold">
+              {isDarkMode ? 'LIGHT MODE' : 'DARK MODE'}
             </button>
             <button onClick={saveSettings} className="px-8 py-4 bg-[#a9b897] text-stone-900 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg active:scale-95 transition-all">
               Commit Changes
@@ -126,19 +121,17 @@ export default function SettingsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           
-          {/* LEFT COLUMN: CORE CONFIG */}
           <div className="lg:col-span-8 space-y-10">
             
-            {/* CLARITY AI: TONE OF VOICE */}
+            {/* TONE OF VOICE */}
             <section className={`p-10 rounded-[2.5rem] border space-y-6 ${isDarkMode ? 'bg-stone-900 border-stone-800' : 'bg-white border-stone-100'}`}>
               <div className="flex items-center gap-3">
-                <MessageSquareQuote className="text-[#a9b897]" size={20} />
                 <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-stone-400">Clarity AI: Tone of Voice</h2>
               </div>
               <textarea 
                 value={toneOfVoice}
                 onChange={(e) => setToneOfVoice(e.target.value)}
-                placeholder="Describe your brand voice... (e.g. Minimalist, direct, high-end)"
+                placeholder="Describe your brand voice..."
                 className="w-full h-32 p-6 bg-stone-50 dark:bg-stone-800/50 border-none rounded-3xl text-sm outline-none resize-none"
               />
             </section>
@@ -153,8 +146,7 @@ export default function SettingsPage() {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {Object.keys(handles).map((key) => (
                   <div key={key} className="p-4 bg-stone-50 dark:bg-stone-800 rounded-2xl flex items-center gap-3">
-                    {/* Replaced Twitter-specific icon logic with Globe for stability */}
-                    <Globe size={14} className="text-stone-300" />
+                    <span className="text-[9px] font-bold text-stone-400 uppercase">{key.substring(0,2)}</span>
                     <input 
                       value={handles[key]} 
                       onChange={(e) => setHandles({...handles, [key]: e.target.value})}
@@ -170,76 +162,45 @@ export default function SettingsPage() {
             <section className={`p-10 rounded-[2.5rem] border space-y-8 ${isDarkMode ? 'bg-stone-900 border-stone-800' : 'bg-white border-stone-100'}`}>
               <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-stone-400">Privacy & Security</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <button className="flex items-center justify-between p-6 bg-stone-50 dark:bg-stone-800 rounded-3xl hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors">
-                  <div className="text-left">
+                <button className="flex items-center justify-between p-6 bg-stone-50 dark:bg-stone-800 rounded-3xl hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors text-left">
+                  <div>
                     <p className="text-xs font-black uppercase">Change Password</p>
                     <p className="text-[10px] opacity-50">Update your access key</p>
                   </div>
-                  <Lock size={18} />
                 </button>
-                <button className="flex items-center justify-between p-6 bg-stone-50 dark:bg-stone-800 rounded-3xl hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors">
-                  <div className="text-left">
+                <button className="flex items-center justify-between p-6 bg-stone-50 dark:bg-stone-800 rounded-3xl hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors text-left">
+                  <div>
                     <p className="text-xs font-black uppercase">Download Vault</p>
-                    <p className="text-[10px] opacity-50">Export all system data (.json)</p>
+                    <p className="text-[10px] opacity-50">Export system data (.json)</p>
                   </div>
-                  <Download size={18} />
                 </button>
               </div>
             </section>
           </div>
 
-          {/* RIGHT COLUMN: BILLING & REGION */}
           <div className="lg:col-span-4 space-y-10">
-            
-            {/* SUBSCRIPTION TIER */}
             <section className="bg-stone-900 p-10 rounded-[3rem] text-white space-y-6 shadow-2xl">
-              <div className="flex justify-between items-start">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#a9b897]">Current Plan</p>
-                <Zap size={20} className="text-[#a9b897]" fill="currentColor" />
-              </div>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#a9b897]">Current Plan</p>
               <h3 className="text-4xl font-serif italic">Enterprise</h3>
-              <p className="text-xs text-stone-400">Next billing date: Jan 12, 2026</p>
+              <p className="text-xs text-stone-400">Next billing: Jan 12, 2026</p>
               <div className="pt-4 space-y-3">
                 <button className="w-full py-4 bg-white/10 hover:bg-white/20 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">Manage Billing</button>
-                <button className="w-full py-4 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">Cancel Subscription</button>
               </div>
             </section>
 
-            {/* LOCALIZATION */}
             <section className={`p-10 rounded-[3rem] border space-y-6 ${isDarkMode ? 'bg-stone-900 border-stone-800' : 'bg-white border-stone-100'}`}>
               <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-stone-400">Localization</h2>
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase opacity-30">Language</label>
-                  <select value={language} onChange={(e) => setLanguage(e.target.value)} className="w-full p-4 bg-stone-50 dark:bg-stone-800 rounded-xl text-xs font-bold outline-none">
-                    <option>English (UK)</option>
-                    <option>English (US)</option>
-                    <option>French</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase opacity-30">Timezone</label>
-                  <select value={timezone} onChange={(e) => setTimezone(e.target.value)} className="w-full p-4 bg-stone-50 dark:bg-stone-800 rounded-xl text-xs font-bold outline-none">
-                    <option>GMT (London)</option>
-                    <option>EST (New York)</option>
-                    <option>PST (Los Angeles)</option>
-                  </select>
-                </div>
+                <select value={language} onChange={(e) => setLanguage(e.target.value)} className="w-full p-4 bg-stone-50 dark:bg-stone-800 rounded-xl text-xs font-bold outline-none">
+                  <option>English (UK)</option>
+                  <option>English (US)</option>
+                </select>
+                <select value={timezone} onChange={(e) => setTimezone(e.target.value)} className="w-full p-4 bg-stone-50 dark:bg-stone-800 rounded-xl text-xs font-bold outline-none">
+                  <option>GMT (London)</option>
+                  <option>EST (New York)</option>
+                </select>
               </div>
             </section>
-
-            {/* LEGAL HUB */}
-            <section className={`p-10 rounded-[3rem] border space-y-6 ${isDarkMode ? 'bg-stone-900 border-stone-800' : 'bg-white border-stone-100'}`}>
-              <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-stone-400">Legal Hub</h2>
-              <div className="space-y-2">
-                {["Privacy Policy", "Terms of Service", "Cookie Protocol", "Accessibility Statement"].map((item) => (
-                  <button key={item} className="w-full text-left p-4 hover:bg-stone-50 dark:hover:bg-stone-800 rounded-2xl text-[10px] font-black uppercase tracking-tighter opacity-60 hover:opacity-100 transition-all">
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </section>
-
           </div>
         </div>
       </div>

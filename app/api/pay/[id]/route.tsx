@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
+// We define a 'Context' to tell TypeScript that params is a Promise
 type RouteContext = {
   params: Promise<{ id: string }>;
 };
@@ -9,7 +10,7 @@ export async function GET(
   request: Request,
   context: RouteContext
 ) {
-  // You MUST await context.params in Next.js 15/16
+  // This is the 'await' part—we wait for the ID to be ready
   const { id } = await context.params;
 
   try {

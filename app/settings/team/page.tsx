@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { 
-  Instagram, Linkedin, Twitter, Globe, Zap, Mail, Lock, Download, 
-  Sun, Moon, MessageSquareQuote, MapPin, Phone, Building2, Upload
+  Globe, Zap, Mail, Lock, Download, 
+  Sun, Moon, MessageSquareQuote, MapPin, Phone, Building2, Upload,
+  Users, Share2 // Replaced missing branded icons with stable alternatives
 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -78,7 +79,6 @@ export default function SettingsPage() {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          {/* LOGO & PRIMARY INFO */}
           <section className="lg:col-span-8 space-y-8 bg-white dark:bg-stone-900 p-12 rounded-[3.5rem] border border-stone-100 dark:border-stone-800">
             <div className="flex flex-col md:flex-row gap-12 items-start">
               <div className="space-y-4">
@@ -117,9 +117,27 @@ export default function SettingsPage() {
                  <input placeholder="Website" value={website} onChange={(e) => setWebsite(e.target.value)} className="bg-transparent text-xs font-bold outline-none w-full" />
                </div>
             </div>
+
+            {/* SOCIAL HANDLES - CLEANED FOR DEPLOYMENT */}
+            <div className="pt-8 border-t border-stone-100 dark:border-stone-800 space-y-4">
+              <label className="text-[10px] font-black uppercase text-stone-400">Social Connections</label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-stone-50 dark:bg-stone-800 rounded-2xl flex items-center gap-4">
+                  <span className="text-[10px] font-bold text-[#a9b897]">IG</span>
+                  <input placeholder="Instagram" value={handles.instagram} onChange={(e) => setHandles({...handles, instagram: e.target.value})} className="bg-transparent text-xs outline-none w-full" />
+                </div>
+                <div className="p-4 bg-stone-50 dark:bg-stone-800 rounded-2xl flex items-center gap-4">
+                  <span className="text-[10px] font-bold text-[#a9b897]">LI</span>
+                  <input placeholder="LinkedIn" value={handles.linkedin} onChange={(e) => setHandles({...handles, linkedin: e.target.value})} className="bg-transparent text-xs outline-none w-full" />
+                </div>
+                <div className="p-4 bg-stone-50 dark:bg-stone-800 rounded-2xl flex items-center gap-4">
+                  <span className="text-[10px] font-bold text-[#a9b897]">TW</span>
+                  <input placeholder="Twitter" value={handles.twitter} onChange={(e) => setHandles({...handles, twitter: e.target.value})} className="bg-transparent text-xs outline-none w-full" />
+                </div>
+              </div>
+            </div>
           </section>
 
-          {/* COLOR & TONE */}
           <section className="lg:col-span-4 space-y-8">
             <div className="bg-stone-900 p-10 rounded-[3rem] text-white">
                <h3 className="text-xl font-serif italic mb-6">Visual DNA</h3>

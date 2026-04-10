@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createBrowserClient } from "@supabase/ssr"; // Changed this
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
@@ -11,7 +11,12 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   
   const router = useRouter();
-  const supabase = createClientComponentClient();
+
+  // Create the client directly using your env vars
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,73 +32,62 @@ export default function LoginPage() {
       setError(error.message);
       setLoading(false);
     } else {
-      // Redirect to dashboard on success
-      router.push("/dashboard");
+      // Successful login! 
+      // We refresh to ensure the middleware picks up the new cookie
       router.refresh();
+      router.push("/dashboard");
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-[#F9F9F9] px-4">
       <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-sm border border-gray-100">
         <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+          <h2 className="text-2xl font-bold tracking-tight text-gray-900">
             TOTS-OS
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Sign in to your dashboard
+          <p className="mt-2 text-sm text-gray-500">
+            Welcome back. Please sign in.
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+        <form className="mt-8 space-y-4" onSubmit={handleLogin}>
           {error && (
-            <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
+            <div className="rounded-md bg-red-50 p-3 text-xs text-red-500 border border-red-100">
               {error}
             </div>
           )}
           
-          <div className="space-y-4 rounded-md shadow-sm">
-            <div>
-              <label htmlFor="email-address" className="sr-only">Email address</label>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                required
-                className="relative block w-full rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-black focus:outline-none sm:text-sm"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="relative block w-full rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-black focus:outline-none sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+          <div className="space-y-3">
+            <input
+              type="email"
+              required
+              className="block w-full rounded-lg border border-gray-200 px-4 py-3 text-gray-900 text-sm focus:border-black focus:ring-0 focus:outline-none transition-all"
+              placeholder="Email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              required
+              className="block w-full rounded-lg border border-gray-200 px-4 py-3 text-gray-900 text-sm focus:border-black focus:ring-0 focus:outline-none transition-all"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative flex w-full justify-center rounded-md border border-transparent bg-black py-2 px-4 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:opacity-50"
-            >
-              {loading ? "Signing in..." : "Sign in"}
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-lg bg-black py-3 px-4 text-sm font-medium text-white hover:bg-zinc-800 transition-colors disabled:opacity-50"
+          >
+            {loading ? "Verifying..." : "Sign in"}
+          </button>
         </form>
         
-        <div className="text-center text-sm text-gray-500 mt-4">
-          Don't have an account? <a href="/join" className="font-medium text-black hover:underline">Join now</a>
+        <div className="text-center text-xs text-gray-400 mt-6">
+          Don't have an account? <a href="/join" className="text-black hover:underline">Request access</a>
         </div>
       </div>
     </div>

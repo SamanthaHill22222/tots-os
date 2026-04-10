@@ -76,8 +76,8 @@ export default function ReportsPage() {
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-black">
       <div className="text-center space-y-4">
-        <p className="text-[#a9b897] animate-pulse font-black uppercase text-xs tracking-widest">SCANNING DATA NODES...</p>
-        <p className="text-stone-500 font-serif italic text-sm">Generating Intelligence Report...</p>
+        <p className="text-[#a9b897] animate-pulse font-black uppercase text-xs tracking-widest">Scanning Intelligence Hub...</p>
+        <p className="text-stone-500 font-serif italic text-sm">Aggregating Global Performance...</p>
       </div>
     </div>
   );
@@ -97,22 +97,22 @@ export default function ReportsPage() {
         </div>
         <div className="hidden md:flex bg-white border border-stone-200 px-5 py-2.5 rounded-full items-center gap-3 shadow-sm">
            <div className="w-2.5 h-2.5 rounded-full bg-[#a9b897] animate-pulse" />
-           <span className="text-[10px] font-black uppercase tracking-widest text-stone-600">Live Sync Active</span>
+           <span className="text-[10px] font-black uppercase tracking-widest text-stone-600">Secure Link Active</span>
         </div>
       </div>
 
       {/* OPERATIONAL GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[
-          { label: "Revenue", val: `£${data.revenue.toLocaleString()}`, color: "text-green-400", code: "REV" },
-          { label: "Efficiency", val: `${data.tasksDone} Done`, color: "text-blue-400", code: "EFF" },
-          { label: "Workload", val: `${data.totalHours}h`, color: "text-purple-400", code: "HRS" },
-          { label: "Critical", val: data.overdueCount, color: "text-red-400", code: "CRIT" }
+          { label: "Revenue", val: `£${data.revenue.toLocaleString()}`, color: "text-green-500" },
+          { label: "Efficiency", val: `${data.tasksDone} Done`, color: "text-blue-500" },
+          { label: "Workload", val: `${data.totalHours}h`, color: "text-purple-500" },
+          { label: "Critical", val: data.overdueCount, color: "text-red-500" }
         ].map((stat, i) => (
           <div key={i} className="bg-stone-950 border border-stone-800 p-8 rounded-[2rem] space-y-5 shadow-2xl">
-            <div className={`flex justify-between items-center ${stat.color}`}>
-              <span className="text-[9px] font-mono opacity-60">[{stat.code}]</span>
+            <div className="flex justify-between items-center">
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-500">{stat.label}</span>
+              <span className={`text-[8px] font-mono ${stat.color}`}>[ACTIVE]</span>
             </div>
             <p className="text-4xl font-serif italic text-white tracking-tight">{stat.val}</p>
           </div>
@@ -121,36 +121,23 @@ export default function ReportsPage() {
 
       {/* EMAIL CAMPAIGN INTELLIGENCE */}
       <div className="bg-stone-950 border border-stone-800 p-10 rounded-[3rem] space-y-12 shadow-2xl">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#a9b897]">Email Intelligence</h2>
-          </div>
-          <span className="text-[9px] font-bold text-stone-600 uppercase">Aggregated Stats</span>
-        </div>
-
+        <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#a9b897]">Email Intelligence</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
           <div className="space-y-3">
             <p className="text-[9px] font-bold uppercase tracking-widest text-stone-500">Open Rate</p>
             <p className="text-5xl font-serif italic text-white">{openRate}%</p>
-            <div className="h-1 w-12 bg-blue-500/50 rounded-full" />
           </div>
-
           <div className="space-y-3">
             <p className="text-[9px] font-bold uppercase tracking-widest text-stone-500">CTR</p>
             <p className="text-5xl font-serif italic text-white">{clickRate}%</p>
-            <div className="h-1 w-12 bg-green-500/50 rounded-full" />
           </div>
-
           <div className="space-y-3">
-            <p className="text-[9px] font-bold uppercase tracking-widest text-stone-500">Unsubscribes</p>
+            <p className="text-[9px] font-bold uppercase tracking-widest text-stone-500">Unsubs</p>
             <p className="text-5xl font-serif italic text-red-400">{data.email.unsubs}</p>
-            <div className="h-1 w-12 bg-red-500/50 rounded-full" />
           </div>
-
           <div className="space-y-3">
             <p className="text-[9px] font-bold uppercase tracking-widest text-stone-500">Total Sent</p>
             <p className="text-5xl font-serif italic text-white">{data.email.sent.toLocaleString()}</p>
-            <div className="h-1 w-12 bg-[#a9b897]/50 rounded-full" />
           </div>
         </div>
       </div>
@@ -158,14 +145,11 @@ export default function ReportsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* ENGAGEMENT INDEX CARD */}
         <div className="lg:col-span-2 bg-stone-950 border border-stone-800 p-10 rounded-[3rem] space-y-12 shadow-2xl">
-          <div className="flex justify-between items-center">
-            <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#a9b897]">Social Engagement</h2>
-          </div>
-          
+          <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#a9b897]">Social Engagement Index</h2>
           <div className="grid grid-cols-3 gap-10">
             <div className="space-y-3">
               <p className="text-4xl font-serif italic text-white">{data.social.likes.toLocaleString()}</p>
-              <p className="text-[9px] font-bold text-stone-500 uppercase tracking-widest">Total Likes</p>
+              <p className="text-[9px] font-bold text-stone-500 uppercase tracking-widest">Likes</p>
             </div>
             <div className="space-y-3">
               <p className="text-4xl font-serif italic text-white">{data.social.comments.toLocaleString()}</p>
@@ -176,19 +160,11 @@ export default function ReportsPage() {
               <p className="text-[9px] font-bold text-stone-500 uppercase tracking-widest">Shares</p>
             </div>
           </div>
-          
-          <div className="pt-8 border-t border-stone-800 flex justify-between items-center">
-            <p className="text-[9px] text-stone-600 font-black uppercase tracking-widest">Post Volume: {data.social.totalPosts}</p>
-            <div className="flex items-center gap-2">
-               <span className="w-1.5 h-1.5 rounded-full bg-[#a9b897]" />
-               <p className="text-[9px] text-[#a9b897] font-black uppercase tracking-widest">Growth: {data.social.totalPosts > 0 ? "Active" : "Stable"}</p>
-            </div>
-          </div>
         </div>
 
         {/* PLATFORM POWER (TRENDS) */}
         <div className="bg-stone-950 border border-stone-800 p-10 rounded-[3rem] space-y-8 shadow-2xl">
-          <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-stone-500">Platform Power</h2>
+          <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-stone-500">Platform Presence</h2>
           <div className="space-y-8">
             {['instagram', 'linkedin', 'twitter'].map((platform) => {
               const trends = data?.trends || {};
@@ -203,9 +179,9 @@ export default function ReportsPage() {
                     <span className="text-[10px] font-bold uppercase tracking-tighter text-white">{platform}</span>
                     <span className="text-[10px] font-mono text-stone-500">{score.toLocaleString()}</span>
                   </div>
-                  <div className="h-1.5 w-full bg-stone-800 rounded-full overflow-hidden shadow-inner">
+                  <div className="h-1 w-full bg-stone-800 rounded-full overflow-hidden">
                     <div 
-                      className="h-full bg-[#a9b897] transition-all duration-1000 ease-out shadow-[0_0_12px_#a9b897cc]" 
+                      className="h-full bg-[#a9b897] transition-all duration-1000" 
                       style={{ width: `${percentage}%` }}
                     />
                   </div>

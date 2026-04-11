@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { 
   Globe, Zap, Mail, Lock, Download, 
   Sun, Moon, MessageSquareQuote, MapPin, Phone, Building2, Upload,
-  Users, Share2 // Replaced missing branded icons with stable alternatives
+  Users, Share2 
 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -24,6 +24,13 @@ export default function SettingsPage() {
   const [contactEmail, setContactEmail] = useState("");
   const [primaryColor, setPrimaryColor] = useState("#a9b897");
   const [toneOfVoice, setToneOfVoice] = useState("Professional, yet empathetic.");
+  
+  // Handles state to prevent "handles is not defined" error
+  const [handles, setHandles] = useState({
+    instagram: "",
+    twitter: "",
+    linkedin: ""
+  });
 
   useEffect(() => { init(); }, []);
 
@@ -47,7 +54,8 @@ export default function SettingsPage() {
         setWebsite(s.website || "");
         setContactEmail(s.contact_email || "");
         setPrimaryColor(s.primary_color || "#a9b897");
-        setHandles(s.handles || handles);
+        setHandles(s.handles || { instagram: "", twitter: "", linkedin: "" });
+        setToneOfVoice(s.tone_of_voice || "Professional, yet empathetic.");
       }
     }
     setLoading(false);
@@ -56,11 +64,18 @@ export default function SettingsPage() {
   const saveSettings = async () => {
     const { error } = await supabase.from("settings").upsert({
       team_id: teamId,
-      logo, business_name: businessName, address, phone,
-      website, contact_email: contactEmail, primary_color: primaryColor,
-      handles, tone_of_voice: toneOfVoice
+      logo, 
+      business_name: businessName, 
+      address, 
+      phone,
+      website, 
+      contact_email: contactEmail, 
+      primary_color: primaryColor,
+      handles, 
+      tone_of_voice: toneOfVoice
     });
     if (!error) alert("Brand Identity Synced.");
+    else console.error(error);
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center font-serif italic">Loading System...</div>;
@@ -117,10 +132,37 @@ export default function SettingsPage() {
                </div>
             </div>
 
-            {/* SOCIAL HANDLES - CLEANED FOR DEPLOYMENT */}
+            {/* SOCIAL HANDLES - REPLACED BRAND ICONS WITH SHARE2 FOR STABILITY */}
             <div className="pt-8 border-t border-stone-100 dark:border-stone-800 space-y-4">
               <label className="text-[10px] font-black uppercase text-stone-400">Social Connections</label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-stone-50 dark:bg-stone-800 rounded-2xl flex items-center gap-4">
+                  <Share2 size={16} className="text-stone-400" />
+                  <input 
+                    placeholder="Instagram URL" 
+                    value={handles.instagram} 
+                    onChange={(e) => setHandles({...handles, instagram: e.target.value})} 
+                    className="bg-transparent text-xs outline-none w-full" 
+                  />
+                </div>
+                <div className="p-4 bg-stone-50 dark:bg-stone-800 rounded-2xl flex items-center gap-4">
+                  <Share2 size={16} className="text-stone-400" />
+                  <input 
+                    placeholder="Twitter URL" 
+                    value={handles.twitter} 
+                    onChange={(e) => setHandles({...handles, twitter: e.target.value})} 
+                    className="bg-transparent text-xs outline-none w-full" 
+                  />
+                </div>
+                <div className="p-4 bg-stone-50 dark:bg-stone-800 rounded-2xl flex items-center gap-4">
+                  <Share2 size={16} className="text-stone-400" />
+                  <input 
+                    placeholder="LinkedIn URL" 
+                    value={handles.linkedin} 
+                    onChange={(e) => setHandles({...handles, linkedin: e.target.value})} 
+                    className="bg-transparent text-xs outline-none w-full" 
+                  />
+                </div>
               </div>
             </div>
           </section>
@@ -133,6 +175,15 @@ export default function SettingsPage() {
                  <input type="color" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="w-12 h-12 rounded-full overflow-hidden border-none" />
                  <p className="font-mono text-sm">{primaryColor}</p>
                </div>
+            </div>
+            
+            <div className="bg-white dark:bg-stone-900 p-10 rounded-[3rem] border border-stone-100 dark:border-stone-800">
+               <h3 className="text-xl font-serif italic mb-6">Copy Tone</h3>
+               <textarea 
+                 value={toneOfVoice} 
+                 onChange={(e) => setToneOfVoice(e.target.value)}
+                 className="w-full p-4 bg-stone-50 dark:bg-stone-800 rounded-2xl text-xs outline-none min-h-[100px] resize-none"
+               />
             </div>
           </section>
         </div>
